@@ -6,6 +6,9 @@ using UnityEngine.UI;
 namespace Balloons
 {
 
+    /// <summary>
+    /// Контроллер HUD
+    /// </summary>
     [DisallowMultipleComponent]
     public class HUDController : MonoBehaviour
     {
@@ -18,13 +21,20 @@ namespace Balloons
         private Text _timeField;
 
 
-        
+        /// <summary>
+        /// Установить количество очков
+        /// </summary>
+        /// <param name="scores"></param>
         public void SetScores(int scores)
         {
             _scoresField.text = scores.ToString();
         }
      
-        
+
+        /// <summary>
+        /// Установаить количество оставшегося времени
+        /// </summary>
+        /// <param name="time"></param>
         public void SetTime(int time)
         {
             _timeField.text = time.ToString();

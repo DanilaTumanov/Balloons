@@ -6,6 +6,9 @@ using UnityEngine;
 namespace Balloons
 {
 
+    /// <summary>
+    /// Абстрактный класс спаунера
+    /// </summary>
     [DisallowMultipleComponent]
     public abstract class Spawner : MonoBehaviour
     {
@@ -18,9 +21,10 @@ namespace Balloons
         public Vector2 spawnTime = new Vector2(2, 3);
 
 
-
+        // Признак активности
         private bool _enabled = false;
 
+        // Корутина, в которой происходит спаун
         private Coroutine _spawnCoroutine;
         
 
@@ -28,17 +32,22 @@ namespace Balloons
         
 
 
-
+        /// <summary>
+        /// Активировать или деактивировать спаунер
+        /// </summary>
+        /// <param name="enabled">true - активировать, false - деактивировать</param>
         public void SetEnabled(bool enabled)
         {
             _enabled = enabled;
 
             if (enabled)
             {
+                // При активации запускаем корутину
                 _spawnCoroutine = StartCoroutine(ProcessSpawn());
             }
             else if (_spawnCoroutine != null)
             {
+                // При деактивации останавливаем и удаляем корутину
                 StopCoroutine(_spawnCoroutine);
                 _spawnCoroutine = null;
             }
@@ -46,7 +55,10 @@ namespace Balloons
 
                
 
-
+        /// <summary>
+        /// Обработка спауна. Метод корутины
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator ProcessSpawn()
         {
             while (true)
@@ -57,7 +69,10 @@ namespace Balloons
         }
 
 
-
+        /// <summary>
+        /// Сгенерировать случайное время следующего спауна
+        /// </summary>
+        /// <returns></returns>
         private float GetNextSpawnTime()
         {
             return Random.Range(spawnTime.x, spawnTime.y);
@@ -65,9 +80,14 @@ namespace Balloons
 
 
 
-
+        /// <summary>
+        /// Удалить экземпляры сгенерированных объектов
+        /// </summary>
         public abstract void ClearInstances();
 
+        /// <summary>
+        /// Создать экземпляр объекта
+        /// </summary>
         protected abstract void Spawn();
 
 

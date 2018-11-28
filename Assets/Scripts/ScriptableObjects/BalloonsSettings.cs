@@ -6,6 +6,9 @@ using UnityEngine;
 namespace Balloons
 {
 
+    /// <summary>
+    /// Настройки шарика
+    /// </summary>
     [CreateAssetMenu(fileName = "BalloonsSettings", menuName = "Settings/Balloons", order = 1)]
     public class BalloonsSettings : ScriptableObject
     {

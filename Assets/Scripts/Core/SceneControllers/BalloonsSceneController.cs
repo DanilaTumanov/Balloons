@@ -6,6 +6,9 @@ using UnityEngine;
 namespace Balloons
 {
 
+    /// <summary>
+    /// Контроллер сцены сбивания шариков
+    /// </summary>
     public class BalloonsSceneController : SceneController
     {
 
@@ -22,7 +25,9 @@ namespace Balloons
         }
 
 
-
+        /// <summary>
+        /// Перезапуск игры
+        /// </summary>
         public override void RestartGame()
         {
             _balloonSpawner.SetEnabled(false);
@@ -32,7 +37,9 @@ namespace Balloons
         }
 
 
-
+        /// <summary>
+        /// Запуск игры
+        /// </summary>
         protected override void StartGame()
         {
             base.StartGame();
@@ -41,6 +48,9 @@ namespace Balloons
         }
 
 
+        /// <summary>
+        /// Конец игры
+        /// </summary>
         protected override void GameOver()
         {
             _balloonSpawner.SetEnabled(false);

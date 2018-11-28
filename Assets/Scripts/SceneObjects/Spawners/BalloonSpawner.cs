@@ -7,6 +7,9 @@ using Helpers;
 namespace Balloons
 {
 
+    /// <summary>
+    /// Спаунер шариков
+    /// </summary>
     public class BalloonSpawner : SpawnerType<Balloon>
     {
 
@@ -14,7 +17,7 @@ namespace Balloons
         /// Примерное максимальное количество шариков на сцене. Нужно для контроля порядка шариков в слоях.
         /// </summary>
         const int ESTIMATED_MAX_BALLOONS = 100;
-
+        
 
         [SerializeField]
         [Tooltip("Настройки шариков")]
@@ -22,10 +25,13 @@ namespace Balloons
 
         
 
-        
+        // Счетчик порядка шариков в слое отрисовки, чтобы избежать мигания при одинаковых слоях
         private int _orderInLayer;
 
+        // Горизонтальные границы спауна
         private Vector2 _horizontalBounds;
+
+        // Вертикальные границы
         private Vector2 _verticalBounds;
 
 
@@ -39,14 +45,21 @@ namespace Balloons
 
 
 
-
+        /// <summary>
+        /// Получить префаб объекта
+        /// </summary>
+        /// <returns></returns>
         protected override Balloon GetPrefab()
         {
             return _balloonsSettings.balloonPrefab;
         }
 
                
-
+        /// <summary>
+        /// Получить координаты спауна конкретного шарика (зависит от его размера)
+        /// </summary>
+        /// <param name="balloon">Шарик</param>
+        /// <returns></returns>
         private Vector3 GetSpawnCoords(Balloon balloon)
         {
             var bounds = GetHorizontalBounds(balloon);
@@ -56,6 +69,9 @@ namespace Balloons
 
 
 
+        /// <summary>
+        /// Рассчитать и установить границы спауна
+        /// </summary>
         private void SetBounds()
         {
             var cam = Camera.main;
@@ -68,7 +84,11 @@ namespace Balloons
 
 
 
-
+        /// <summary>
+        /// Получить горизонтальные границы спауна шарика
+        /// </summary>
+        /// <param name="balloon">Шарик</param>
+        /// <returns></returns>
         private Vector2 GetHorizontalBounds(Balloon balloon)
         {
             var extent = balloon.GetHorizontalExtent();
@@ -76,6 +96,11 @@ namespace Balloons
         }
 
 
+        /// <summary>
+        /// Получить вертикальные границы полета шарика
+        /// </summary>
+        /// <param name="balloon">Шарик</param>
+        /// <returns></returns>
         private float GetHorizontalBound(Balloon balloon)
         {
             return _verticalBounds.y + balloon.GetVertiacalExtent();
@@ -83,6 +108,11 @@ namespace Balloons
 
 
 
+        /// <summary>
+        /// Рассчитать очки для шарика
+        /// </summary>
+        /// <param name="balloon">Шарик</param>
+        /// <returns></returns>
         private int GetScores(Balloon balloon)
         {
             var pureScores = _balloonsSettings.baseScores + balloon.transform.localScale.y * _balloonsSettings.scoresOverScale;
@@ -90,27 +120,37 @@ namespace Balloons
         }
 
 
-
+        /// <summary>
+        /// Инициализация нового объекта
+        /// </summary>
+        /// <param name="balloon"></param>
         protected override void InitInstance(Balloon balloon)
         {
+            // Генерируем случаный масштаб
             var scale = Random.Range(_balloonsSettings.scaleBounds.x, _balloonsSettings.scaleBounds.y);
 
-            balloon.SetSprite(_balloonsSettings.balloonSprites[Random.Range(0, _balloonsSettings.balloonSprites.Length)]);
-
+            // Устанавливаем масштаб
             balloon.transform.localScale = Vector3.one * scale;
 
+            // Устанавливаем случаный спрайт (цвет)
+            balloon.SetSprite(_balloonsSettings.balloonSprites[Random.Range(0, _balloonsSettings.balloonSprites.Length)]);
+
+            // Рассчитываем скорость, исходя из базовой скорости, зависимости ее от скейла и от времени раунда
             balloon.speed = 
                 _balloonsSettings.baseSpeed
                 + Main.SceneController.GameTime * _balloonsSettings.speedOverTime
                 + scale * _balloonsSettings.speedOverScale;
             
+            // Устанавливаем верткальный предел, после которого шарик уничтожится
             balloon.verticalLimit = GetHorizontalBound(balloon);
 
+            // Устанавливаем случаную позицию
             balloon.transform.position = GetSpawnCoords(balloon);
 
+            // Рассчитывае количество очков, которые получит игров сбив текущий шарик
             balloon.Scores = GetScores(balloon);
 
-
+            // Устанавливаем порядок сортировки, чтобы шарики не мигали
             balloon.GetComponent<SpriteRenderer>().sortingOrder = _orderInLayer;
             _orderInLayer = ++_orderInLayer % ESTIMATED_MAX_BALLOONS;
         }
